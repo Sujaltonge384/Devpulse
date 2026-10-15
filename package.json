@@ -3,11 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-<<<<<<< HEAD
     "install:all": "npm install && npm install --prefix client && npm install --prefix server",
-=======
-    "install:all": "npm install --prefix client && npm install --prefix server",
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
     "dev:client": "npm --prefix client run dev",
     "dev:server": "npm --prefix server run dev",
@@ -16,14 +12,9 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
-<<<<<<< HEAD
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.13.0",
     "react-redux": "^9.3.0"
   }
 }
-=======
-  }
-}
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
