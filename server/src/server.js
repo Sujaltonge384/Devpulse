@@ -32,6 +32,9 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use("/api/auth", rateLimit({ windowMs: 15 * 60 * 1000, limit: 100, standardHeaders: true, legacyHeaders: false }));
 app.get("/", (req, res) => res.json({ success: true, message: "Welcome to DevPulse API" }));
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);

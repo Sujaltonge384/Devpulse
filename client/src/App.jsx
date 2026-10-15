@@ -80,7 +80,7 @@ function App() {
 
         <div className="workspace-switcher">
           <div className="workspace-avatar">D</div>
-          <div className="workspace-copy"><strong>Personal workspace</strong><span>Free plan</span></div>
+          <div className="workspace-copy"><strong>Personal workspace</strong></div>
           <ChevronDown size={15} />
         </div>
 
