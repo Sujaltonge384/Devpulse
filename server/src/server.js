@@ -26,7 +26,6 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 app.disable("x-powered-by");
 app.use(helmet());
-import cors from "cors";
 
 const allowedOrigins = [
   "https://devpulse-flax-two.vercel.app",
