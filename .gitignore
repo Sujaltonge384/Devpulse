@@ -1,0 +1,39 @@
+node_modules/
+client/node_modules/
+client/dist/
+server/node_modules/
+server/.env
+.env
+*.log
+.DS_Store
+
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+client/.env
+client/.env.*
+!client/.env.example
+server/.env
+server/.env.*
+!server/.env.example
+
+# Build output
+dist/
+build/
+.next/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local development files
+.DS_Store
+Thumbs.db
+.vscode/
