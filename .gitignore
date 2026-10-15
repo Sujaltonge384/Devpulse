@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+=======
+node_modules/
+client/node_modules/
+client/dist/
+server/node_modules/
+server/.env
+.env
+*.log
+.DS_Store
+
+>>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
 # Dependencies
 node_modules/
 client/node_modules/
@@ -6,7 +18,11 @@ server/node_modules/
 # Environment variables and secrets
 .env
 .env.*
+<<<<<<< HEAD
 !.env.example
+=======
+.env.example
+>>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
 client/.env
 client/.env.*
 !client/.env.example
@@ -14,15 +30,24 @@ server/.env
 server/.env.*
 !server/.env.example
 
+<<<<<<< HEAD
 # Production builds
 dist/
 build/
 client/dist/
 client/build/
+=======
+# Build output
+dist/
+build/
+.next/
+coverage/
+>>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
 
 # Logs
 *.log
 npm-debug.log*
+<<<<<<< HEAD
 yarn-debug.log*
 pnpm-debug.log*
 
@@ -39,3 +64,10 @@ coverage/
 .tmp/
 .temp/
 
+=======
+
+# Local development files
+.DS_Store
+Thumbs.db
+.vscode/
+>>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
