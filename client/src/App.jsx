@@ -2,11 +2,7 @@ import React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import {
-<<<<<<< HEAD
   Activity, ArrowDownRight, ArrowUpRight, Bell, Check, CheckCircle2, ChevronDown, CalendarDays, GitPullRequest,
-=======
-  Activity, ArrowDownRight, ArrowUpRight, Bell, Check, CheckCircle2, ChevronDown,
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
   CircleHelp, CirclePlus, ClipboardList, Code2, Command, FolderKanban, LayoutDashboard,
   LogOut, Menu, Moon, MoreHorizontal, Plus, Search, Settings, ShieldCheck, Sun,
   Target, Trash2, Users, X, Zap, Clock3, AlertTriangle, Github, Sparkles
@@ -19,10 +15,7 @@ import {
   useUpdateTaskMutation, useDeleteTaskMutation, useGetDashboardQuery, useGetHealthQuery
 } from "./api/baseApi";
 import { toggleTheme, setToast, clearToast } from "./features/ui/uiSlice";
-<<<<<<< HEAD
 import { GitHubPage, ActivityPage, SearchPage, CalendarPage, TeamPage, NotificationBell } from "./features/extended/WorkspacePages";
-=======
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
 
 const colors = ["violet", "blue", "green", "orange", "pink"];
 const statusLabel = { todo: "To do", "in-progress": "In progress", done: "Done" };
@@ -56,14 +49,11 @@ function App() {
   const pathTitle = location.pathname.startsWith("/projects") ? "Projects"
     : location.pathname.startsWith("/tasks") ? "Tasks"
     : location.pathname.startsWith("/settings") ? "Settings"
-<<<<<<< HEAD
     : location.pathname.startsWith("/github") ? "GitHub workspace"
     : location.pathname.startsWith("/activity") ? "Activity & notifications"
     : location.pathname.startsWith("/search") ? "Search workspace"
     : location.pathname.startsWith("/calendar") ? "Calendar"
     : location.pathname.startsWith("/team") ? "Team workspace"
-=======
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
     : "Overview";
 
   async function handleLogout() {
@@ -99,7 +89,6 @@ function App() {
           <NavLink end to="/" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><LayoutDashboard size={18} /><span>Overview</span><kbd>⌘1</kbd></NavLink>
           <NavLink to="/projects" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><FolderKanban size={18} /><span>Projects</span></NavLink>
           <NavLink to="/tasks" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><ClipboardList size={18} /><span>Tasks</span></NavLink>
-<<<<<<< HEAD
           <NavLink to="/team" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><Users size={18} /><span>Team</span></NavLink>
           <NavLink to="/calendar" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><CalendarDays size={18} /><span>Calendar</span></NavLink>
         </nav>
@@ -109,9 +98,6 @@ function App() {
           <NavLink to="/github" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><Github size={18} /><span>GitHub</span></NavLink>
           <NavLink to="/activity" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><Activity size={18} /><span>Activity</span></NavLink>
           <NavLink to="/search" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><Search size={18} /><span>Search</span></NavLink>
-=======
-          <button className="nav-link disabled-link" title="Team collaboration is planned for a later phase"><Users size={18} /><span>Team</span><span className="nav-soon">SOON</span></button>
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
         </nav>
 
         <div className="nav-label nav-label-spaced">PERSONAL</div>
@@ -144,14 +130,9 @@ function App() {
           </div>
           <div className="topbar-right">
             <div className="api-pill"><span className="api-dot" /> Connected workspace</div>
-<<<<<<< HEAD
             <button className="icon-btn" onClick={() => navigate("/search")} title="Search workspace" aria-label="Search workspace"><Search size={18} /></button>
             <button className="icon-btn theme-toggle" onClick={() => dispatch(toggleTheme())} title={`Switch to ${theme === "light" ? "dark" : "light"} theme`} aria-label="Toggle theme">{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}</button>
             <NotificationBell />
-=======
-            <button className="icon-btn theme-toggle" onClick={() => dispatch(toggleTheme())} title={`Switch to ${theme === "light" ? "dark" : "light"} theme`} aria-label="Toggle theme">{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}</button>
-            <button className="icon-btn notification-btn" onClick={() => dispatch(setToast({ type: "info", message: "You're all caught up. Notifications will appear here." }))} aria-label="Notifications"><Bell size={18} /><i /></button>
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
             <div className="topbar-avatar">{(user.name || "D").slice(0,1).toUpperCase()}</div>
           </div>
         </header>
@@ -161,14 +142,11 @@ function App() {
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/tasks" element={<TasksPage />} />
             <Route path="/settings" element={<SettingsPage user={user} />} />
-<<<<<<< HEAD
             <Route path="/github" element={<GitHubPage />} />
             <Route path="/activity" element={<ActivityPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/team" element={<TeamPage />} />
-=======
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

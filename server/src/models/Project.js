@@ -5,12 +5,8 @@ const projectSchema = new mongoose.Schema({
   description: { type: String, trim: true, maxlength: 1000, default: "" },
   color: { type: String, enum: ["violet", "blue", "green", "orange", "pink"], default: "violet" },
   status: { type: String, enum: ["active", "completed", "archived"], default: "active" },
-<<<<<<< HEAD
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
-=======
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
->>>>>>> 404cc66100e7cfb8a943eb63edc59fb1c084fb46
 }, { timestamps: true });
 
 projectSchema.index({ owner: 1, updatedAt: -1 });
