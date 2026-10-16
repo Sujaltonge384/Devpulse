@@ -22,6 +22,12 @@ import { GitHubPage, ActivityPage, SearchPage, CalendarPage, TeamPage, Notificat
 const colors = ["violet", "blue", "green", "orange", "pink"];
 const statusLabel = { todo: "To do", "in-progress": "In progress", done: "Done" };
 
+const profileMenuItemStyle = {
+  width: "100%", display: "flex", alignItems: "center", gap: 10,
+  padding: "10px 9px", border: 0, borderRadius: 9, background: "transparent",
+  color: "inherit", font: "inherit", fontSize: 13, textAlign: "left", cursor: "pointer"
+};
+
 function App() {
   const dispatch = useDispatch();
   const theme = useSelector((s) => s.ui.theme);
@@ -31,10 +37,27 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  useEffect(() => {
+    if (!profileOpen) return;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setProfileOpen(false);
+    };
+    const closeOnOutsideClick = (event) => {
+      if (!event.target.closest(".topbar-profile-menu")) setProfileOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("click", closeOnOutsideClick);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("click", closeOnOutsideClick);
+    };
+  }, [profileOpen]);
 
   useEffect(() => {
     if (!toast) return;
@@ -152,7 +175,49 @@ function App() {
             <button className="icon-btn" onClick={() => navigate("/search")} title="Search workspace" aria-label="Search workspace"><Search size={18} /></button>
             <button className="icon-btn theme-toggle" onClick={() => dispatch(toggleTheme())} title={`Switch to ${theme === "light" ? "dark" : "light"} theme`} aria-label="Toggle theme">{theme === "light" ? <Moon size={18} /> : <Sun size={18} />}</button>
             <NotificationBell />
-            <div className="topbar-avatar">{(user.name || "D").slice(0,1).toUpperCase()}</div>
+            <div className="topbar-profile-menu" style={{ position: "relative" }}>
+              <button
+                type="button"
+                className="topbar-avatar"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setProfileOpen((open) => !open);
+                }}
+                aria-label="Open profile menu"
+                aria-haspopup="menu"
+                aria-expanded={profileOpen}
+                title="Your profile"
+              >
+                {(user.name || "D").slice(0, 1).toUpperCase()}
+              </button>
+              {profileOpen && (
+                <div className="profile-dropdown" role="menu" style={{
+                  position: "absolute", top: "calc(100% + 12px)", right: 0,
+                  width: 260, padding: 10, border: "1px solid var(--border, rgba(130,130,150,.2))",
+                  borderRadius: 14, background: "var(--surface, var(--card, #fff))",
+                  boxShadow: "0 18px 48px rgba(0,0,0,.16)", zIndex: 1000,
+                  color: "var(--text, #222)"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px 9px 13px", borderBottom: "1px solid var(--border, rgba(130,130,150,.16))", marginBottom: 7 }}>
+                    <div className="avatar" style={{ flexShrink: 0 }}>{(user.name || "D").slice(0, 1).toUpperCase()}</div>
+                    <div style={{ minWidth: 0, display: "grid", gap: 3 }}>
+                      <strong style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.name || "DevPulse user"}</strong>
+                      <span style={{ fontSize: 11, opacity: .7, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email || ""}</span>
+                    </div>
+                  </div>
+                  <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); navigate("/settings"); }} style={profileMenuItemStyle}>
+                    <Users size={16} /> My profile <ArrowUpRight size={14} style={{ marginLeft: "auto", opacity: .55 }} />
+                  </button>
+                  <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); navigate("/settings"); }} style={profileMenuItemStyle}>
+                    <Settings size={16} /> Settings
+                  </button>
+                  <div style={{ height: 1, background: "var(--border, rgba(130,130,150,.16))", margin: "7px 3px" }} />
+                  <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); handleLogout(); }} style={{ ...profileMenuItemStyle, color: "#d9535f" }}>
+                    <LogOut size={16} /> Sign out
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
         <div className="route-content">
