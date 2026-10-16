@@ -1,4 +1,4 @@
-<div align="center">
+x<div align="center">
 
 # DevPulse
 
@@ -30,16 +30,22 @@ The project demonstrates full-stack application development, API integration, au
 > Add screenshots captured from your running application to `docs/screenshots/` using the filenames below. These image paths are placeholders until you add the real screenshots.
 
 ### Dashboard
-![DevPulse Dashboard](docs/screenshots/dashboard.png)
+<img width="1900" height="976" alt="image" src="https://github.com/user-attachments/assets/a45bf8af-7309-4733-8b8d-af06260f30cc" />
 
 ### Projects
-![DevPulse Projects](docs/screenshots/projects.png)
+<img width="1911" height="990" alt="image" src="https://github.com/user-attachments/assets/3155985d-9d46-43ea-818b-f02399b7a737" />
 
 ### Task Management
-![DevPulse Tasks](docs/screenshots/tasks.png)
+<img width="1917" height="986" alt="image" src="https://github.com/user-attachments/assets/31c37349-023d-4d51-a440-430457154772" />
+
+### GitHub workspace
+<img width="1917" height="986" alt="image" src="https://github.com/user-attachments/assets/5052e0a2-fd83-4f57-839a-c845e8c381c7" />
+
+### Notifications & activity
+<img width="1916" height="987" alt="image" src="https://github.com/user-attachments/assets/c53bf6bd-b1ef-4002-b764-cd10ffc19e0f" />
 
 ### Help Center
-![DevPulse Help Center](docs/screenshots/help-center.png)
+<img width="1892" height="991" alt="image" src="https://github.com/user-attachments/assets/92e4162e-98b5-4fa3-9b90-8f376ca5169f" />
 
 ### How to add screenshots
 
