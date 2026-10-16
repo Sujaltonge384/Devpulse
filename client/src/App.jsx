@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import {
   Activity, ArrowDownRight, ArrowUpRight, Bell, Check, CheckCircle2, ChevronDown, CalendarDays, GitPullRequest,
@@ -309,7 +310,16 @@ function Dashboard({ user }) {
       `}</style>
       <div className="welcome-header">
         <div><div className="eyebrow"><span className="eyebrow-line" /> DEVELOPER COMMAND CENTER</div><h1>Good to see you, {user.name.split(" ")[0]}<span className="heading-period">.</span></h1><p className="page-subtitle">Here's what's happening with your work today.</p></div>
-        <div className="welcome-actions"><span className="date-chip"><Clock3 size={15}/>{today}</span><button className="button button-primary" onClick={()=>window.dispatchEvent(new CustomEvent("devpulse:create-project"))}><Plus size={17}/> New project</button></div>
+        <div className="welcome-actions"><span className="date-chip"><Clock3 size={15}/>{today}</span><button
+  type="button"
+  className="button button-primary"
+  onClick={() => {
+    window.location.href = "/projects?create=1";
+  }}
+>
+  <Plus size={17} />
+  New project
+</button></div>
       </div>
       {isError && <div className="inline-alert"><AlertTriangle size={17}/><div><strong>Couldn't load dashboard data</strong><span>Check that the API is running and MongoDB is connected.</span></div><button onClick={refetch}>Retry</button></div>}
       <div className="metric-grid">
@@ -321,7 +331,9 @@ function Dashboard({ user }) {
       <div className="dashboard-grid">
         <section className="surface-card projects-overview">
           <div className="section-top"><div><h2>Projects overview</h2><p>Your active work, all in one place.</p></div><NavLink to="/projects" className="link-button">View all <ArrowUpRight size={15}/></NavLink></div>
-          {projects.length === 0 ? <EmptyState icon={FolderKanban} title="Your workspace starts here" text="Create a project to organize tasks, track progress, and keep your work moving." action="Create your first project" onClick={()=>window.dispatchEvent(new CustomEvent("devpulse:create-project"))}/> : <div className="project-list">{projects.slice(0,4).map(project=><ProjectRow key={project._id} project={project}/>)}</div>}
+          {projects.length === 0 ? <EmptyState icon={FolderKanban} title="Your workspace starts here" text="Create a project to organize tasks, track progress, and keep your work moving." action="Create your first project" onClick={() => {
+  window.location.href = "/projects?create=1";
+}}/> : <div className="project-list">{projects.slice(0,4).map(project=><ProjectRow key={project._id} project={project}/>)}</div>}
         </section>
         <section className="surface-card progress-card">
           <div className="section-top"><div><h2>Task progress</h2><p>A snapshot of your workload.</p></div><div className="mini-icon"><Target size={17}/></div></div>
@@ -421,11 +433,28 @@ function ProjectsPage() {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [form, setForm] = useState({ name: "", description: "", color: "violet" });
 
-  useEffect(() => {
-    const open = () => { setEditing(null); setForm({ name: "", description: "", color: "violet" }); setModal(true); };
-    window.addEventListener("devpulse:create-project", open);
-    return () => window.removeEventListener("devpulse:create-project", open);
-  }, []);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+useEffect(() => {
+  if (searchParams.get("create") !== "1") return;
+
+  setEditing(null);
+  setForm({
+    name: "",
+    description: "",
+    color: "violet",
+  });
+  setModal(true);
+
+  setSearchParams(
+    (current) => {
+      const next = new URLSearchParams(current);
+      next.delete("create");
+      return next;
+    },
+    { replace: true }
+  );
+}, [searchParams, setSearchParams]);
 
   const visible = projects.filter(p => p.name.toLowerCase().includes(query.toLowerCase()) && (filter === "all" || p.status === filter));
   function openEdit(p) { setEditing(p); setForm({ name:p.name, description:p.description||"", color:p.color||"violet" }); setModal(true); }
