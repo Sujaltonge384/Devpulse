@@ -65,8 +65,8 @@ function App() {
     } finally {
       localStorage.removeItem("devpulse_token");
       dispatch(baseApi.util.resetApiState());
+      dispatch(baseApi.util.resetApiState());
       navigate("/login", { replace: true });
-      window.location.reload();
     }
   }
   async function fetchLogout() {
@@ -232,6 +232,7 @@ function AuthPage({ onSuccess }) {
 }
 
 function Dashboard({ user }) {
+  const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useGetDashboardQuery();
   const { data: projects = [] } = useGetProjectsQuery();
   const { data: allTasks = [] } = useGetTasksQuery();
@@ -313,9 +314,7 @@ function Dashboard({ user }) {
         <div className="welcome-actions"><span className="date-chip"><Clock3 size={15}/>{today}</span><button
   type="button"
   className="button button-primary"
-  onClick={() => {
-    window.location.href = "/projects?create=1";
-  }}
+  onClick={() => navigate("/projects?create=1")}
 >
   <Plus size={17} />
   New project
@@ -331,9 +330,7 @@ function Dashboard({ user }) {
       <div className="dashboard-grid">
         <section className="surface-card projects-overview">
           <div className="section-top"><div><h2>Projects overview</h2><p>Your active work, all in one place.</p></div><NavLink to="/projects" className="link-button">View all <ArrowUpRight size={15}/></NavLink></div>
-          {projects.length === 0 ? <EmptyState icon={FolderKanban} title="Your workspace starts here" text="Create a project to organize tasks, track progress, and keep your work moving." action="Create your first project" onClick={() => {
-  window.location.href = "/projects?create=1";
-}}/> : <div className="project-list">{projects.slice(0,4).map(project=><ProjectRow key={project._id} project={project}/>)}</div>}
+          {projects.length === 0 ? <EmptyState icon={FolderKanban} title="Your workspace starts here" text="Create a project to organize tasks, track progress, and keep your work moving." action="Create your first project" onClick={() => navigate("/projects?create=1")}/> : <div className="project-list">{projects.slice(0,4).map(project=><ProjectRow key={project._id} project={project}/>)}</div>}
         </section>
         <section className="surface-card progress-card">
           <div className="section-top"><div><h2>Task progress</h2><p>A snapshot of your workload.</p></div><div className="mini-icon"><Target size={17}/></div></div>
@@ -400,7 +397,7 @@ function Dashboard({ user }) {
       </section>
       <section className="surface-card recent-card">
         <div className="section-top"><div><h2>Recent tasks</h2><p>The latest updates across your projects.</p></div><NavLink to="/tasks" className="link-button">All tasks <ArrowUpRight size={15}/></NavLink></div>
-        {recent.length === 0 ? <EmptyState icon={ClipboardList} title="No tasks yet" text="Add tasks to your projects and they'll show up here." action="Go to tasks" onClick={()=>window.location.assign("/tasks")}/> : <div className="table-wrap"><table><thead><tr><th>Task</th><th>Project</th><th>Priority</th><th>Status</th></tr></thead><tbody>{recent.map(task=><tr key={task._id}><td><span className={`task-check ${task.status==="done"?"checked":""}`}>{task.status==="done"&&<Check size={12}/>}</span><span className={task.status==="done"?"task-title-done":"task-title"}>{task.title}</span></td><td><span className="project-cell"><i className={`project-dot ${task.project?.color||"violet"}`}/>{task.project?.name||"Project"}</span></td><td><PriorityPill priority={task.priority}/></td><td><StatusPill status={task.status}/></td></tr>)}</tbody></table></div>}
+        {recent.length === 0 ? <EmptyState icon={ClipboardList} title="No tasks yet" text="Add tasks to your projects and they'll show up here." action="Go to tasks" onClick={()=>navigate("/tasks")}/> : <div className="table-wrap"><table><thead><tr><th>Task</th><th>Project</th><th>Priority</th><th>Status</th></tr></thead><tbody>{recent.map(task=><tr key={task._id}><td><span className={`task-check ${task.status==="done"?"checked":""}`}>{task.status==="done"&&<Check size={12}/>}</span><span className={task.status==="done"?"task-title-done":"task-title"}>{task.title}</span></td><td><span className="project-cell"><i className={`project-dot ${task.project?.color||"violet"}`}/>{task.project?.name||"Project"}</span></td><td><PriorityPill priority={task.priority}/></td><td><StatusPill status={task.status}/></td></tr>)}</tbody></table></div>}
       </section>
       <div className="dashboard-footnote"><span><span className={`health-light ${health?.data?.database==="connected"?"healthy":""}`}/>{health?.data?.database==="connected"?"API and database connected":"Workspace data is loaded from your account"}</span><span>Built to help you stay in flow <Sparkles size={13}/></span></div>
     </div>
@@ -421,6 +418,7 @@ function EmptyState({ icon: Icon, title, text, action, onClick }) {
 }
 
 function ProjectsPage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data: projects = [], isLoading, isError } = useGetProjectsQuery();
   const [createProject, createState] = useCreateProjectMutation();
@@ -474,7 +472,7 @@ useEffect(() => {
   return <div className="page-wrap">
     <div className="page-heading-row"><div><div className="eyebrow"><span className="eyebrow-line"/> ORGANIZE YOUR WORK</div><h1>Projects<span className="heading-period">.</span></h1><p className="page-subtitle">A home for every idea, initiative, and release.</p></div><button className="button button-primary" onClick={()=>{setEditing(null);setForm({name:"",description:"",color:"violet"});setModal(true)}}><Plus size={17}/> New project</button></div>
     <div className="toolbar"><div className="search-box"><Search size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search projects…"/>{query&&<button onClick={()=>setQuery("")}><X size={14}/></button>}</div><div className="filter-tabs">{[["all","All projects"],["active","Active"],["completed","Completed"],["archived","Archived"]].map(([v,l])=><button key={v} className={filter===v?"selected":""} onClick={()=>setFilter(v)}>{l}</button>)}</div></div>
-    {isLoading ? <div className="loading-card">Loading projects…</div> : isError ? <div className="inline-alert"><AlertTriangle size={17}/><div><strong>Couldn't load projects</strong><span>Check your API and database connection.</span></div></div> : visible.length ? <div className="project-card-grid">{visible.map(p=><article className="project-card" key={p._id}><div className="project-card-top"><div className={`project-symbol large ${p.color}`}><Code2 size={21}/></div><button className="icon-btn" onClick={()=>openEdit(p)} title="Edit project"><MoreHorizontal size={18}/></button></div><div className="project-card-name">{p.name}</div><p className="project-card-desc">{p.description||"A new space for your team's work and ideas."}</p><div className="project-card-meta"><span className={`status-label status-${p.status}`}>{p.status}</span><span>{p.taskCount} tasks</span></div><div className="project-progress-track"><span className={p.color} style={{width:`${p.taskCount?Math.round(p.completedTasks/p.taskCount*100):0}%`}}/></div><div className="project-card-bottom"><span>{p.completedTasks||0} completed</span><div className="card-actions"><button onClick={()=>{window.location.href=`/tasks?project=${p._id}`}}>View tasks <ArrowUpRight size={13}/></button><button className="danger-icon" onClick={()=>setConfirmDelete(p)} title="Delete project"><Trash2 size={14}/></button></div></div></article>)}</div> : <div className="surface-card"><EmptyState icon={FolderKanban} title={query?"No matching projects":"No projects yet"} text={query?"Try a different search term or filter.":"Create your first project to start organizing your work."} action={query?"Clear search":"Create a project"} onClick={()=>query?setQuery(""):setModal(true)}/></div>}
+    {isLoading ? <div className="loading-card">Loading projects…</div> : isError ? <div className="inline-alert"><AlertTriangle size={17}/><div><strong>Couldn't load projects</strong><span>Check your API and database connection.</span></div></div> : visible.length ? <div className="project-card-grid">{visible.map(p=><article className="project-card" key={p._id}><div className="project-card-top"><div className={`project-symbol large ${p.color}`}><Code2 size={21}/></div><button className="icon-btn" onClick={()=>openEdit(p)} title="Edit project"><MoreHorizontal size={18}/></button></div><div className="project-card-name">{p.name}</div><p className="project-card-desc">{p.description||"A new space for your team's work and ideas."}</p><div className="project-card-meta"><span className={`status-label status-${p.status}`}>{p.status}</span><span>{p.taskCount} tasks</span></div><div className="project-progress-track"><span className={p.color} style={{width:`${p.taskCount?Math.round(p.completedTasks/p.taskCount*100):0}%`}}/></div><div className="project-card-bottom"><span>{p.completedTasks||0} completed</span><div className="card-actions"><button onClick={()=>navigate(`/tasks?project=${p._id}`)}>View tasks <ArrowUpRight size={13}/></button><button className="danger-icon" onClick={()=>setConfirmDelete(p)} title="Delete project"><Trash2 size={14}/></button></div></div></article>)}</div> : <div className="surface-card"><EmptyState icon={FolderKanban} title={query?"No matching projects":"No projects yet"} text={query?"Try a different search term or filter.":"Create your first project to start organizing your work."} action={query?"Clear search":"Create a project"} onClick={()=>query?setQuery(""):setModal(true)}/></div>}
     {modal&&<Modal title={editing?"Edit project":"Create a project"} subtitle="Give your work a clear home." onClose={()=>setModal(false)}><form onSubmit={submit} className="modal-form"><label className="field-label">Project name<input autoFocus value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="e.g. Website redesign" maxLength={120} required/></label><label className="field-label">Description <span className="optional">Optional</span><textarea value={form.description} onChange={e=>setForm({...form,description:e.target.value})} placeholder="What are you building?" rows={3}/></label><div className="field-label">Project color<div className="color-options">{colors.map(c=><button type="button" key={c} aria-label={c} className={`color-choice ${c} ${form.color===c?"chosen":""}`} onClick={()=>setForm({...form,color:c})}>{form.color===c&&<Check size={14}/>}</button>)}</div></div><div className="modal-actions"><button type="button" className="button button-secondary" onClick={()=>setModal(false)}>Cancel</button><button className="button button-primary" disabled={createState.isLoading}>{editing?"Save changes":"Create project"}<ArrowUpRight size={15}/></button></div></form></Modal>}
     {confirmDelete&&<ConfirmModal title="Delete this project?" text={`“${confirmDelete.name}” and all of its tasks will be permanently deleted.`} onCancel={()=>setConfirmDelete(null)} onConfirm={remove}/>}
   </div>;
@@ -482,6 +480,7 @@ useEffect(() => {
 
 
 function TasksPage() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data: projects = [] } = useGetProjectsQuery();
   const [query, setQuery] = useState("");
@@ -710,7 +709,7 @@ function TasksPage() {
             <strong>Create a project first</strong>
             <span>Tasks belong to a project. Create one before adding tasks.</span>
           </div>
-          <button onClick={() => window.location.assign("/projects")}>
+          <button onClick={() => navigate("/projects")}>
             Go to projects
           </button>
         </div>
@@ -1218,7 +1217,7 @@ function SettingsPage({ user }) {
     <div className="page-heading-row"><div><div className="eyebrow"><span className="eyebrow-line"/> MAKE IT YOURS</div><h1>Settings<span className="heading-period">.</span></h1><p className="page-subtitle">Your workspace, your preferences.</p></div></div>
     <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><Users size={19}/></div><div><h2>Profile</h2><p>Your account details.</p></div></div><div className="settings-profile"><div className="settings-avatar">{user.name.slice(0,1).toUpperCase()}</div><div><strong>{user.name}</strong><span>{user.email}</span></div><span className="verified-tag"><ShieldCheck size={13}/> Account</span></div></section>
     <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><Sun size={19}/></div><div><h2>Appearance</h2><p>Choose the look that works for you.</p></div></div><div className="settings-option"><div><strong>Color theme</strong><span>Switch between light and dark appearance.</span></div><div className="theme-choice"><button className={theme==="light"?"chosen":""} onClick={()=>{if(theme!=="light")dispatch(toggleTheme())}}><Sun size={15}/> Light</button><button className={theme==="dark"?"chosen":""} onClick={()=>{if(theme!=="dark")dispatch(toggleTheme())}}><Moon size={15}/> Dark</button></div></div></section>
-    <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><ShieldCheck size={19}/></div><div><h2>Security</h2><p>Manage your active session.</p></div></div><div className="settings-option"><div><strong>Sign out</strong><span>End your current DevPulse session on this browser.</span></div><button className="button button-danger" onClick={async()=>{try{await logout().unwrap()}catch(error){console.error("Sign out failed:",error)}finally{localStorage.removeItem("devpulse_token");window.location.assign("/login")}}}><LogOut size={15}/> Sign out</button></div></section>
+    <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><ShieldCheck size={19}/></div><div><h2>Security</h2><p>Manage your active session.</p></div></div><div className="settings-option"><div><strong>Sign out</strong><span>End your current DevPulse session on this browser.</span></div><button className="button button-danger" onClick={async()=>{try{await logout().unwrap()}catch(error){console.error("Sign out failed:",error)}finally{localStorage.removeItem("devpulse_token");dispatch(baseApi.util.resetApiState());window.location.assign("/login")}}}><LogOut size={15}/> Sign out</button></div></section>
     <section className="surface-card settings-card integration-card"><div className="settings-section-title"><div className="settings-section-icon"><Github size={19}/></div><div><h2>Integrations</h2><p>Connect the tools you already use.</p></div></div><div className="integration-row"><div className="integration-icon"><Github size={20}/></div><div className="integration-copy"><strong>GitHub</strong><span>Repository sync and pull request activity</span></div><span className="coming-badge">PLANNED</span></div><div className="integration-row"><div className="integration-icon ai"><Sparkles size={20}/></div><div className="integration-copy"><strong>AI project assistant</strong><span>Project summaries and release notes</span></div><span className="coming-badge">PLANNED</span></div></section>
     <div className="settings-note"><ShieldCheck size={16}/><span>Your account data is scoped to your user ID on the backend. Never share your environment variables or API secrets.</span></div>
   </div>;
