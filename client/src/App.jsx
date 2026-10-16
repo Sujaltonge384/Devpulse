@@ -9,6 +9,7 @@ import {
   Target, Trash2, Users, X, Zap, Clock3, AlertTriangle, Github, Sparkles
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import HelpCenter from "./pages/HelpCenter";
 import {
   baseApi, useGetMeQuery, useLoginMutation, useRegisterMutation, useLogoutMutation,
   useGetProjectsQuery, useCreateProjectMutation, useUpdateProjectMutation,
@@ -55,6 +56,7 @@ function App() {
     : location.pathname.startsWith("/search") ? "Search workspace"
     : location.pathname.startsWith("/calendar") ? "Calendar"
     : location.pathname.startsWith("/team") ? "Team workspace"
+    : location.pathname.startsWith("/help") ? "Help Center"
     : "Overview";
 
   async function handleLogout() {
@@ -114,8 +116,14 @@ function App() {
         <div className="nav-label nav-label-spaced">PERSONAL</div>
         <nav className="nav-list">
           <NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`} onClick={() => setMobileOpen(false)}><Settings size={18} /><span>Settings</span></NavLink>
-          <button className="nav-link" onClick={() => dispatch(setToast({ type: "info", message: "Help center documentation is coming soon." }))}><CircleHelp size={18} /><span>Help center</span></button>
-        </nav>
+<NavLink
+  to="/help"
+  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+  onClick={() => setMobileOpen(false)}
+>
+  <CircleHelp size={18} />
+  <span>Help center</span>
+</NavLink>        </nav>
 
         <div className="sidebar-spacer" />
         <div className="sidebar-upgrade">
@@ -159,6 +167,7 @@ function App() {
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/team" element={<TeamPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/help" element={<HelpCenter />} />
           </Routes>
         </div>
       </main>
