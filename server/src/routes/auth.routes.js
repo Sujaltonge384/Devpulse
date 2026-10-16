@@ -7,23 +7,6 @@ import { requireAuth } from "../middleware/auth.js";
 
 const router = Router();
 
-const isProduction = process.env.NODE_ENV === "production";
-
-const cookieOptions = () => ({
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? "none" : "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-  path: "/",
-});
-
-const clearCookieOptions = () => ({
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? "none" : "lax",
-  path: "/",
-});
-
 function publicUser(user) {
   return {
     id: user._id.toString(),
@@ -32,34 +15,25 @@ function publicUser(user) {
   };
 }
 
-function setToken(res, user) {
-  const token = jwt.sign(
+function createToken(user) {
+  return jwt.sign(
     { sub: user._id.toString() },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
-
-  res.cookie("devpulse_token", token, cookieOptions());
 }
 
-// Register a new account.
+// REGISTER
 router.post("/register", async (req, res, next) => {
   try {
     const name = String(req.body?.name || "").trim();
     const email = String(req.body?.email || "").trim().toLowerCase();
     const password = String(req.body?.password || "");
 
-    if (name.length < 2) {
+    if (name.length < 2 || name.length > 80) {
       return res.status(400).json({
         success: false,
-        message: "Name must contain at least 2 characters.",
-      });
-    }
-
-    if (name.length > 80) {
-      return res.status(400).json({
-        success: false,
-        message: "Name must be 80 characters or fewer.",
+        message: "Name must be between 2 and 80 characters.",
       });
     }
 
@@ -87,18 +61,15 @@ router.post("/register", async (req, res, next) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-
-    const user = await User.create({
-      name,
-      email,
-      passwordHash,
-    });
-
-    setToken(res, user);
+    const user = await User.create({ name, email, passwordHash });
+    const token = createToken(user);
 
     return res.status(201).json({
       success: true,
-      data: { user: publicUser(user) },
+      data: {
+        user: publicUser(user),
+        token,
+      },
     });
   } catch (error) {
     if (error.code === 11000) {
@@ -112,7 +83,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-// Sign in to an existing account.
+// LOGIN
 router.post("/login", async (req, res, next) => {
   try {
     const email = String(req.body?.email || "").trim().toLowerCase();
@@ -134,18 +105,21 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    setToken(res, user);
+    const token = createToken(user);
 
     return res.json({
       success: true,
-      data: { user: publicUser(user) },
+      data: {
+        user: publicUser(user),
+        token,
+      },
     });
   } catch (error) {
     next(error);
   }
 });
 
-// Return the current signed-in user.
+// CURRENT USER
 router.get("/me", requireAuth, (req, res) => {
   return res.json({
     success: true,
@@ -153,10 +127,8 @@ router.get("/me", requireAuth, (req, res) => {
   });
 });
 
-// Sign out and clear the session cookie.
+// LOGOUT
 router.post("/logout", (req, res) => {
-  res.clearCookie("devpulse_token", clearCookieOptions());
-
   return res.json({
     success: true,
     message: "Signed out successfully.",

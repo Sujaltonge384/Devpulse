@@ -56,11 +56,18 @@ function App() {
     : location.pathname.startsWith("/team") ? "Team workspace"
     : "Overview";
 
-  async function handleLogout() {
-    try { await fetchLogout(); } catch {}
-    navigate("/login");
-    window.location.reload();
+  
+async function handleLogout() {
+  try {
+    await fetchLogout();
+  } catch (error) {
+    console.error("Logout request failed:", error);
+  } finally {
+    localStorage.removeItem("devpulse_token");
+    window.location.assign("/");
   }
+}
+
   async function fetchLogout() {
     await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/auth/logout`, {
       method: "POST", credentials: "include"
@@ -167,15 +174,29 @@ function AuthPage({ onSuccess }) {
   const busy = loginState.isLoading || registerState.isLoading;
   const error = loginState.error?.data?.message || registerState.error?.data?.message;
 
-  async function submit(e) {
-    e.preventDefault();
-    try {
-      if (mode === "login") await login({ email, password }).unwrap();
-      else await register({ name, email, password }).unwrap();
-      onSuccess();
-      window.location.href = "/";
-    } catch {}
+  
+async function submit(e) {
+  e.preventDefault();
+
+  try {
+    const result =
+      mode === "login"
+        ? await login({ email, password }).unwrap()
+        : await register({ name, email, password }).unwrap();
+
+    const token = result?.data?.token;
+
+    if (!token) {
+      throw new Error("Authentication token was not returned by the server.");
+    }
+
+    localStorage.setItem("devpulse_token", token);
+    onSuccess();
+  } catch (error) {
+    console.error("Authentication failed:", error);
   }
+}
+
 
   return (
     <div className="auth-layout">
@@ -1173,7 +1194,16 @@ function SettingsPage({ user }) {
     <div className="page-heading-row"><div><div className="eyebrow"><span className="eyebrow-line"/> MAKE IT YOURS</div><h1>Settings<span className="heading-period">.</span></h1><p className="page-subtitle">Your workspace, your preferences.</p></div></div>
     <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><Users size={19}/></div><div><h2>Profile</h2><p>Your account details.</p></div></div><div className="settings-profile"><div className="settings-avatar">{user.name.slice(0,1).toUpperCase()}</div><div><strong>{user.name}</strong><span>{user.email}</span></div><span className="verified-tag"><ShieldCheck size={13}/> Account</span></div></section>
     <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><Sun size={19}/></div><div><h2>Appearance</h2><p>Choose the look that works for you.</p></div></div><div className="settings-option"><div><strong>Color theme</strong><span>Switch between light and dark appearance.</span></div><div className="theme-choice"><button className={theme==="light"?"chosen":""} onClick={()=>{if(theme!=="light")dispatch(toggleTheme())}}><Sun size={15}/> Light</button><button className={theme==="dark"?"chosen":""} onClick={()=>{if(theme!=="dark")dispatch(toggleTheme())}}><Moon size={15}/> Dark</button></div></div></section>
-    <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><ShieldCheck size={19}/></div><div><h2>Security</h2><p>Manage your active session.</p></div></div><div className="settings-option"><div><strong>Sign out</strong><span>End your current DevPulse session on this browser.</span></div><button className="button button-danger" onClick={async()=>{await logout().unwrap().catch(()=>{});window.location.href="/"}}><LogOut size={15}/> Sign out</button></div></section>
+    <section className="surface-card settings-card"><div className="settings-section-title"><div className="settings-section-icon"><ShieldCheck size={19}/></div><div><h2>Security</h2><p>Manage your active session.</p></div></div><div className="settings-option"><div><strong>Sign out</strong><span>End your current DevPulse session on this browser.</span></div><button className="button button-danger" onClick={async () => {
+  try {
+    await logout().unwrap();
+  } catch (error) {
+    console.error("Logout request failed:", error);
+  } finally {
+    localStorage.removeItem("devpulse_token");
+    window.location.assign("/");
+  }
+}}><LogOut size={15}/> Sign out</button></div></section>
     <section className="surface-card settings-card integration-card"><div className="settings-section-title"><div className="settings-section-icon"><Github size={19}/></div><div><h2>Integrations</h2><p>Connect the tools you already use.</p></div></div><div className="integration-row"><div className="integration-icon"><Github size={20}/></div><div className="integration-copy"><strong>GitHub</strong><span>Repository sync and pull request activity</span></div><span className="coming-badge">PLANNED</span></div><div className="integration-row"><div className="integration-icon ai"><Sparkles size={20}/></div><div className="integration-copy"><strong>AI project assistant</strong><span>Project summaries and release notes</span></div><span className="coming-badge">PLANNED</span></div></section>
     <div className="settings-note"><ShieldCheck size={16}/><span>Your account data is scoped to your user ID on the backend. Never share your environment variables or API secrets.</span></div>
   </div>;
