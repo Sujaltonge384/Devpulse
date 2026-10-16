@@ -1,136 +1,227 @@
-# DevPulse — Developer Productivity Workspace
+<div align="center">
 
-DevPulse is a full-stack developer workspace built with React, Vite, Redux Toolkit + RTK Query, Express, MongoDB, and Mongoose. It combines project/task planning with a GitHub activity workspace.
+# DevPulse
 
-## Features
+### A full-stack workspace for managing projects, tasks, and developer activity.
 
-### Workspace
-- Register/login with bcrypt-hashed passwords and JWT in HTTP-only cookies
-- Dashboard statistics and workload analytics
-- Create, edit, filter, search, and delete projects and tasks
-- Kanban board and task list views
-- Task status, priority, and due dates
-- Calendar view of task deadlines
-- Workspace search across task/project titles and descriptions
-- Light/dark theme and responsive navigation
+**Plan smarter. Build better. Stay in sync.**
 
-### Notifications and activity
-- MongoDB-backed notifications with unread counts
-- Mark one or all notifications as read
-- Notification dropdown in the app header
-- Activity feed for task, project, GitHub, and team events
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20DevPulse-6C5CE7?style=for-the-badge&logo=vercel&logoColor=white)](https://devpulse-flax-two.vercel.app)
+[![React](https://img.shields.io/badge/Frontend-React-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Express](https://img.shields.io/badge/Backend-Express-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 
-### GitHub integration
-- GitHub OAuth connection and disconnection
-- Encrypted GitHub access token stored server-side (AES-256-GCM; key derived from `GITHUB_TOKEN_ENCRYPTION_KEY` or `JWT_SECRET`)
-- Repository list with language, visibility, stars, forks, and update time
-- Recent commits for a selected repository
-- Pull requests across the latest 30 accessible repositories, capped at 200 displayed items
-- Recent public GitHub events
-- DevPulse-only PR prioritization and triage status (Urgent/High/Medium/Low and Backlog/Planned/In progress/Done/Ignored)
+</div>
 
-### Team collaboration
-- Add existing DevPulse users to projects by email
-- Shared projects and their tasks are visible to project members
-- Only project owners can manage collaborators or edit/delete shared tasks in this MVP
+---
 
-## Requirements
-- Node.js 20+ recommended (Node 20+ provides built-in `fetch`)
+## 📌 Overview
+
+**DevPulse** is a full-stack project and task management web application built to bring everyday development work into one workspace. It provides a dashboard and dedicated areas for projects, tasks, team workflows, notifications, activity, search, and GitHub-related features.
+
+The project demonstrates full-stack application development, API integration, authentication flows, database-backed features, and deployment of a React frontend and Express backend.
+
+- **Live application:** [devpulse-flax-two.vercel.app](https://devpulse-flax-two.vercel.app)
+- **Backend API:** [devpulse-kr3o.onrender.com](https://devpulse-kr3o.onrender.com)
+- **Repository:** [Sujaltonge384/Devpulse](https://github.com/Sujaltonge384/Devpulse)
+
+## 🖼️ Screenshots
+
+> Add screenshots captured from your running application to `docs/screenshots/` using the filenames below. These image paths are placeholders until you add the real screenshots.
+
+### Dashboard
+![DevPulse Dashboard](docs/screenshots/dashboard.png)
+
+### Projects
+![DevPulse Projects](docs/screenshots/projects.png)
+
+### Task Management
+![DevPulse Tasks](docs/screenshots/tasks.png)
+
+### Help Center
+![DevPulse Help Center](docs/screenshots/help-center.png)
+
+### How to add screenshots
+
+1. Open your local or deployed DevPulse website.
+2. Capture the Dashboard, Projects, Tasks, and Help Center pages.
+3. Create `docs/screenshots/` in the repository.
+4. Save the images as `dashboard.png`, `projects.png`, `tasks.png`, and `help-center.png`.
+5. Commit and push the images. GitHub will then render them in this README.
+
+**Tip:** Use consistent screenshot dimensions and hide personal information, credentials, tokens, and other private data.
+
+## ✨ Features
+
+- **Dashboard:** Central overview of projects, tasks, and recent activity.
+- **Project management:** Create, view, and organize projects.
+- **Task management:** Manage tasks and access project-specific task views.
+- **Authentication:** Login and account-session flows.
+- **Team area:** Access team-related workflows available in the application.
+- **GitHub area:** Dedicated area for GitHub-related development workflows.
+- **Notifications and activity:** Review application notifications and recorded activity.
+- **Search:** Find relevant information through the application's search interface.
+- **Help Center:** Search help articles, browse categories, and expand frequently asked questions.
+- **Responsive interface:** Designed for desktop and smaller screens.
+- **Deployed architecture:** React frontend on Vercel, Express API on Render, and MongoDB database.
+
+*Feature availability depends on the current implementation and configuration of the deployed application.*
+
+## 🧰 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React |
+| Client-side routing | React Router |
+| API and server-state integration | Redux Toolkit / RTK Query |
+| Backend | Node.js, Express.js |
+| Database | MongoDB |
+| Frontend hosting | Vercel |
+| Backend hosting | Render |
+| Version control | Git and GitHub |
+
+## 🏗️ Architecture
+
+```text
+User's Browser
+      |
+      v
+React Frontend (Vercel)
+      |
+      | HTTP requests / API calls
+      v
+Express REST API (Render)
+      |
+      v
+MongoDB Database
+```
+
+The frontend communicates with the backend through API requests. The backend handles server-side routes and database operations.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (an active LTS version is recommended)
 - npm
-- MongoDB Atlas or local MongoDB
-- A GitHub OAuth App for the GitHub integration
+- A MongoDB database, such as a local instance or MongoDB Atlas
+- Git
 
-## 1. Install dependencies
-From the project root:
+### 1. Clone the repository
 
 ```bash
-npm run install:all
+git clone https://github.com/Sujaltonge384/Devpulse.git
+cd Devpulse
 ```
 
-## 2. Configure the backend
-Copy `server/.env.example` to `server/.env` and fill in your values. PowerShell:
+### 2. Configure the backend
 
-```powershell
-Copy-Item server/.env.example server/.env
+```bash
+cd server
+npm install
 ```
 
-Set at minimum:
+Create a `.env` file inside `server/`. A typical configuration may look like this:
 
 ```env
 PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=replace_with_a_long_random_secret
 CLIENT_URL=http://localhost:5173
-MONGODB_URI=mongodb+srv://YOUR_USER:YOUR_PASSWORD@YOUR_CLUSTER/devpulse?retryWrites=true&w=majority
-JWT_SECRET=use-a-long-random-secret-at-least-32-characters
-NODE_ENV=development
 ```
 
-### Configure GitHub OAuth
-1. Open [GitHub Developer Settings](https://github.com/settings/developers) → **OAuth Apps** → **New OAuth App**.
-2. Set **Homepage URL** to `http://localhost:5173`.
-3. Set **Authorization callback URL** to `http://localhost:5000/api/github/callback`.
-4. Copy the client ID and generate a client secret.
-5. Add these to `server/.env`:
+These are example settings. Confirm the exact environment variable names in your server code before running the app. Never commit real database credentials, JWT secrets, or API keys.
 
-```env
-GITHUB_CLIENT_ID=your_oauth_app_client_id
-GITHUB_CLIENT_SECRET=your_oauth_app_client_secret
-GITHUB_CALLBACK_URL=http://localhost:5000/api/github/callback
-GITHUB_TOKEN_ENCRYPTION_KEY=use-a-different-long-random-secret
-```
-
-Restart the backend after changing `.env`. Never commit `.env` or expose the client secret/access token in frontend code.
-
-**GitHub permissions and scope:** this starter requests `read:user user:email public_repo`. It is intended for public repository activity. GitHub's classic OAuth `public_repo` scope does not provide full private-repository access. For a production product that needs private repositories with least-privilege read-only permissions, prefer a GitHub App with explicit read-only repository contents, metadata, and pull-request permissions. Do not casually replace `public_repo` with the broad `repo` scope, because that grants much wider repository access.
-
-## 3. Configure the frontend
-`client/.env.example` contains:
-
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
-Copy it to `client/.env` if you need to override the default API URL.
-
-## 4. Run DevPulse
-From the root folder:
+Start the backend with a script defined in `server/package.json`. For example, if a `dev` script exists:
 
 ```bash
 npm run dev
 ```
 
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:5000`
-- Health endpoint: `http://localhost:5000/api/health`
+### 3. Configure the frontend
 
-Or run the apps separately:
+Open a second terminal from the repository root:
 
 ```bash
-npm run dev:server
-npm run dev:client
+cd client
+npm install
 ```
 
-Register an account first. Task/project operations require a working MongoDB connection. GitHub integration additionally requires the OAuth environment variables above and a signed-in DevPulse account.
+Create or update `client/.env`:
 
-## 5. Build check
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+The variable must match the API base URL expected by the application. Vite exposes `VITE_` variables to client-side code, so never put secrets in frontend environment variables.
+
+Start the frontend with the script defined in `client/package.json`. For a typical Vite setup:
 
 ```bash
-npm run build
+npm run dev
 ```
 
-## Important integration notes
-- OAuth credentials are not included. You must create your own GitHub OAuth App and add credentials locally.
-- Repository list and pull-request queries are limited to the latest 30 accessible repositories to stay within GitHub API limits; pull-request results are capped at 200.
-- GitHub events are the public events endpoint; GitHub does not expose every private event in that feed.
-- Commits load for the selected repository (up to 30).
-- PR priority and triage status are DevPulse metadata; they do not change labels or priority in GitHub itself.
-- Weekly productivity is estimated from task update timestamps; precise completion analytics would need a dedicated `completedAt` field.
-- Team members can view shared projects and tasks, but task mutation/assignment permissions are intentionally owner-only in this MVP.
-- This is a portfolio-ready starting point, not a deployed production service. Before production, add OAuth token revocation on disconnect, GitHub App support if private repo access is needed, automated tests, audit/security review, and deployment-specific cookie/CORS settings.
+Open the local URL printed in the terminal, commonly `http://localhost:5173`.
 
-## Suggested next improvements
-- GitHub App installation flow with least-privilege permissions and private repository support
-- Create a DevPulse task from a GitHub issue or pull request
-- Pull-request review-request tracking and CI/check status
-- GitHub webhooks for near-real-time updates instead of polling
-- Team invitations with accept/decline and task assignees
-- Automated backend/API tests and frontend component tests
+### 4. Verify the application
+
+- Confirm the backend starts without errors.
+- Confirm the frontend loads.
+- Test login and logout.
+- Test project and task workflows.
+- Check the browser console and Network panel if an API request fails.
+
+## 🌐 Deployment
+
+- **Frontend:** [https://devpulse-flax-two.vercel.app](https://devpulse-flax-two.vercel.app)
+- **Backend:** [https://devpulse-kr3o.onrender.com](https://devpulse-kr3o.onrender.com)
+
+For production, configure the frontend API URL in Vercel to point to the deployed backend:
+
+```env
+VITE_API_URL=https://devpulse-kr3o.onrender.com/api
+```
+
+Configure backend environment variables in Render, including the database connection string and authentication secret. Ensure the backend CORS allowlist includes the production frontend domain. Redeploy after changing environment variables.
+
+## 🔐 Security Notes
+
+- Keep `.env` files out of Git.
+- Use strong, unique authentication secrets.
+- Never expose MongoDB credentials, JWT secrets, or private tokens in frontend code.
+- Restrict database access and configure CORS for trusted origins.
+- Do not include real user credentials or private account data in screenshots.
+
+## 🗺️ Potential Improvements
+
+- Automated tests for important frontend and API flows.
+- More detailed project and task filtering.
+- Clear loading, empty, and error states.
+- A dedicated support/contact workflow.
+- CI checks for linting and tests.
+- Improved accessibility and keyboard navigation.
+
+## 🤝 Contributing
+
+Contributions and suggestions are welcome.
+
+1. Fork the repository.
+2. Create a branch for your change.
+3. Make and test your changes.
+4. Open a pull request describing the improvement.
+
+For bugs, include the affected page, steps to reproduce, and the error message. Never include secrets or private credentials.
+
+## 📄 License
+
+No license has been specified in this README. Add a `LICENSE` file and update this section if you intend to distribute the project under a particular open-source license.
+
+---
+
+<div align="center">
+
+**Built as a full-stack development project.**
+
+[Live Demo](https://devpulse-flax-two.vercel.app) · [GitHub Repository](https://github.com/Sujaltonge384/Devpulse)
+
+</div>
