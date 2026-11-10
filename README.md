@@ -34,28 +34,6 @@ A developer productivity workspace that brings project management, task tracking
 
 ---
 
-## ◈ Table of Contents
-
-- [Overview](#-overview)
-- [See DevPulse in Action](#-see-devpulse-in-action)
-- [What Makes DevPulse Special](#-what-makes-devpulse-special)
-- [Features](#-features)
-- [GitHub Integration](#-github-integration)
-- [Technology Stack](#-technology-stack)
-- [Architecture](#-architecture)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Environment Variables](#-environment-variables)
-- [GitHub OAuth Setup](#-github-oauth-setup)
-- [API Overview](#-api-overview)
-- [Deployment](#-deployment)
-- [Security](#-security)
-- [Future Scope](#-future-scope)
-- [Contributing](#-contributing)
-- [Author](#-author)
-
----
-
 ## ◈ Overview
 
 **DevPulse** is a full-stack developer productivity platform designed to organize the everyday development workflow.
