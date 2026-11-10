@@ -10,4 +10,5 @@ const projectSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 projectSchema.index({ owner: 1, updatedAt: -1 });
+projectSchema.index({ members: 1, updatedAt: -1 });
 export default mongoose.model("Project", projectSchema);

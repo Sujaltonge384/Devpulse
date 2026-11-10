@@ -11,4 +11,5 @@ const taskSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 taskSchema.index({ owner: 1, status: 1, updatedAt: -1 });
+taskSchema.index({ project: 1, status: 1, updatedAt: -1 });
 export default mongoose.model("Task", taskSchema);

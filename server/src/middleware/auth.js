@@ -1,15 +1,13 @@
-
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 export async function requireAuth(req, res, next) {
   try {
-    const authHeader = req.headers.authorization;
+    const authorization = req.headers.authorization || "";
 
-    const token =
-      authHeader?.startsWith("Bearer ")
-        ? authHeader.slice(7)
-        : req.cookies?.devpulse_token;
+    const token = authorization.startsWith("Bearer ")
+      ? authorization.slice(7).trim()
+      : req.cookies?.devpulse_token;
 
     if (!token) {
       return res.status(401).json({
@@ -19,21 +17,42 @@ export async function requireAuth(req, res, next) {
     }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(payload.sub).select("_id name email");
 
-    if (!user) {
+    if (!payload?.sub) {
       return res.status(401).json({
         success: false,
-        message: "Account not found.",
+        message: "Your session is invalid. Please sign in again.",
+      });
+    }
+
+    const user = await User.findById(payload.sub).select(
+      "_id name email tokenVersion"
+    );
+
+    if (
+      !user ||
+      Number(payload.ver ?? 0) !== Number(user.tokenVersion ?? 0)
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Your session has expired. Please sign in again.",
       });
     }
 
     req.user = user;
+
     return next();
-  } catch {
-    return res.status(401).json({
-      success: false,
-      message: "Your session has expired. Please sign in again.",
-    });
+  } catch (error) {
+    if (
+      error?.name === "JsonWebTokenError" ||
+      error?.name === "TokenExpiredError"
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "Your session has expired. Please sign in again.",
+      });
+    }
+
+    return next(error);
   }
 }

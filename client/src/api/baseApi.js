@@ -1,12 +1,8 @@
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseQuery = fetchBaseQuery({
-  baseUrl:
-    import.meta.env.VITE_API_URL || "http://localhost:5000/api",
-
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/$/, ""),
   credentials: "include",
-
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("devpulse_token");
 
@@ -17,6 +13,19 @@ const baseQuery = fetchBaseQuery({
     return headers;
   },
 });
+
+// Remove an expired browser token when the session check fails.
+// Login failures are intentionally excluded so the form can show its error.
+const baseQuery = async (args, api, extraOptions) => {
+  const result = await rawBaseQuery(args, api, extraOptions);
+  const url = typeof args === "string" ? args : args?.url;
+
+  if (result.error?.status === 401 && url === "/auth/me") {
+    localStorage.removeItem("devpulse_token");
+  }
+
+  return result;
+};
 
 export const baseApi = createApi({
   reducerPath: "api",
